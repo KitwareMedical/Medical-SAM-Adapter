@@ -7,6 +7,7 @@ from utils import *
 
 from .atlas import Atlas
 from .brat import Brat
+from .cxr import ChestXRay
 from .ddti import DDTI
 from .isic import ISIC2016
 from .kits import KITS
@@ -52,6 +53,15 @@ def get_dataloader(args):
         nice_test_loader = DataLoader(isic_test_dataset, batch_size=args.b, shuffle=False, num_workers=8, pin_memory=True)
         '''end'''
 
+    if args.dataset == 'cxr':
+        '''Chest X-ray data'''
+        cxr_train_dataset = ChestXRay(args, args.data_path, transform = transform_train, transform_msk= transform_train_seg, mode = 'Training')
+        cxr_test_dataset = ChestXRay(args, args.data_path, transform = transform_test, transform_msk= transform_test_seg, mode = 'Test')
+
+        nice_train_loader = DataLoader(cxr_train_dataset, batch_size=args.b, shuffle=True, num_workers=8, pin_memory=True)
+        nice_test_loader = DataLoader(cxr_test_dataset, batch_size=args.b, shuffle=False, num_workers=8, pin_memory=True)
+        '''end'''
+        
     elif args.dataset == 'decathlon':
         nice_train_loader, nice_test_loader, transform_train, transform_val, train_list, val_list = get_decath_loader(args)
 
