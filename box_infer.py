@@ -1,12 +1,9 @@
 #!/usr/bin/env python3
 
 from einops import rearrange
-
-# from dataset import *
-# from models.discriminatorlayer import discriminator
 from dataset import *
 from function import transform_prompt
-from utils import *
+from utils import cfg
 
 
 def main():
