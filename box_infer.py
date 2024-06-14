@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
-import function
+from einops import rearrange
+
 # from dataset import *
 # from models.discriminatorlayer import discriminator
 from dataset import *
-from utils import *
-from einops import rearrange
 from function import transform_prompt
+from utils import *
 
 
 def main():
@@ -51,6 +51,10 @@ def validation_sam(args, val_loader, epoch, net: nn.Module, clean_dir=True):
     pos_weight = torch.ones([1]).cuda(device=GPUdevice) * 2
     criterion_G = torch.nn.BCEWithLogitsLoss(pos_weight=pos_weight)
 
+    detector = torch.hub.load(r'M:\Dev\CXR\yolov5', 'custom',
+                              path=r'M:\Dev\CXR\LungAI\Data\PreprocessedData-YOLO\models\yolo_lung_detection_v2\weights\best.pt',
+                              source='local')
+
     torch.backends.cudnn.benchmark = True
 
     # eval mode
@@ -70,6 +74,7 @@ def validation_sam(args, val_loader, epoch, net: nn.Module, clean_dir=True):
 
     with tqdm(total=n_val, desc='Validation round', unit='batch', leave=False) as pbar:
         for ind, pack in enumerate(val_loader):
+            det = detector(pack['image'])
             imgsw = pack['image'].to(dtype=torch.float32, device=GPUdevice)
             masksw = pack['label'].to(dtype=torch.float32, device=GPUdevice)
             # for k,v in pack['image_meta_dict'].items():
