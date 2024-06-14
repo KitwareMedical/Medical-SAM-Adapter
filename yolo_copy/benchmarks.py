@@ -40,12 +40,12 @@ if str(ROOT) not in sys.path:
 # ROOT = ROOT.relative_to(Path.cwd())  # relative
 
 import export
-from models.experimental import attempt_load
-from models.yolo import SegmentationModel
+from yolo_copy.models.experimental import attempt_load
+from yolo_copy.models.yolo import SegmentationModel
 from segment.val import run as val_seg
-from utils import notebook_init
-from utils.general import LOGGER, check_yaml, file_size, print_args
-from utils.torch_utils import select_device
+from yolo_copy.utils import notebook_init
+from yolo_copy.utils.general import LOGGER, check_yaml, file_size, print_args
+from yolo_copy.utils.torch_utils import select_device
 from val import run as val_det
 
 

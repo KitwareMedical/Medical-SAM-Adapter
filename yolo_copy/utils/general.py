@@ -45,9 +45,9 @@ except (ImportError, AssertionError):
 
 from ultralytics.utils.checks import check_requirements
 
-from utils import TryExcept, emojis
-from utils.downloads import curl_download, gsutil_getsize
-from utils.metrics import box_iou, fitness
+from yolo_copy.utils import TryExcept, emojis
+from yolo_copy.utils.downloads import curl_download, gsutil_getsize
+from yolo_copy.utils.metrics import box_iou, fitness
 
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[1]  # YOLOv5 root directory
@@ -584,7 +584,7 @@ def check_dataset(data, autodownload=True):
 
 def check_amp(model):
     """Checks PyTorch AMP functionality for a model, returns True if AMP operates correctly, otherwise False."""
-    from models.common import AutoShape, DetectMultiBackend
+    from yolo_copy.models.common import AutoShape, DetectMultiBackend
 
     def amp_allclose(model, im):
         # All close FP32 vs AMP results
@@ -1123,7 +1123,7 @@ def strip_optimizer(f="best.pt", s=""):
     Strips optimizer and optionally saves checkpoint to finalize training; arguments are file path 'f' and save path
     's'.
 
-    Example: from utils.general import *; strip_optimizer()
+    Example: from yolo_copy.utils.general import *; strip_optimizer()
     """
     x = torch.load(f, map_location=torch.device("cpu"))
     if x.get("ema"):

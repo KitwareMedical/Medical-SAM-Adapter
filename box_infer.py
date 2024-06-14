@@ -48,7 +48,8 @@ def validation_sam(args, val_loader, epoch, net: nn.Module, clean_dir=True):
     pos_weight = torch.ones([1]).cuda(device=GPUdevice) * 2
     criterion_G = torch.nn.BCEWithLogitsLoss(pos_weight=pos_weight)
 
-    detector = torch.hub.load(r'M:\Dev\CXR\yolov5', 'custom',
+    yolo_path = os.path.abspath(os.path.dirname(__file__)) + '/yolo_copy'
+    detector = torch.hub.load(yolo_path, 'custom',
                               path=r'M:\Dev\CXR\LungAI\Data\PreprocessedData-YOLO\models\yolo_lung_detection_v2\weights\best.pt',
                               source='local')
 

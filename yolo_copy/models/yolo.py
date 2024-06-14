@@ -25,7 +25,7 @@ if str(ROOT) not in sys.path:
 if platform.system() != "Windows":
     ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
 
-from models.common import (
+from yolo_copy.models.common import (
     C3,
     C3SPP,
     C3TR,
@@ -49,11 +49,11 @@ from models.common import (
     GhostConv,
     Proto,
 )
-from models.experimental import MixConv2d
-from utils.autoanchor import check_anchor_order
-from utils.general import LOGGER, check_version, check_yaml, colorstr, make_divisible, print_args
-from utils.plots import feature_visualization
-from utils.torch_utils import (
+from yolo_copy.models.experimental import MixConv2d
+from yolo_copy.utils.autoanchor import check_anchor_order
+from yolo_copy.utils.general import LOGGER, check_version, check_yaml, colorstr, make_divisible, print_args
+from yolo_copy.utils.plots import feature_visualization
+from yolo_copy.utils.torch_utils import (
     fuse_conv_and_bn,
     initialize_weights,
     model_info,

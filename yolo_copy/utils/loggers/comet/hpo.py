@@ -15,9 +15,9 @@ if str(ROOT) not in sys.path:
     sys.path.append(str(ROOT))  # add ROOT to PATH
 
 from train import train
-from utils.callbacks import Callbacks
-from utils.general import increment_path
-from utils.torch_utils import select_device
+from yolo_copy.utils.callbacks import Callbacks
+from yolo_copy.utils.general import increment_path
+from yolo_copy.utils.torch_utils import select_device
 
 # Project Configuration
 config = comet_ml.config.get_config()

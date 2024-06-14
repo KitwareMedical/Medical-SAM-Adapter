@@ -37,10 +37,10 @@ if str(ROOT) not in sys.path:
 ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
 
 from classify import val as validate
-from models.experimental import attempt_load
-from models.yolo import ClassificationModel, DetectionModel
-from utils.dataloaders import create_classification_dataloader
-from utils.general import (
+from yolo_copy.models.experimental import attempt_load
+from yolo_copy.models.yolo import ClassificationModel, DetectionModel
+from yolo_copy.utils.dataloaders import create_classification_dataloader
+from yolo_copy.utils.general import (
     DATASETS_DIR,
     LOGGER,
     TQDM_BAR_FORMAT,
@@ -55,9 +55,9 @@ from utils.general import (
     print_args,
     yaml_save,
 )
-from utils.loggers import GenericLogger
-from utils.plots import imshow_cls
-from utils.torch_utils import (
+from yolo_copy.utils.loggers import GenericLogger
+from yolo_copy.utils.plots import imshow_cls
+from yolo_copy.utils.torch_utils import (
     ModelEMA,
     de_parallel,
     model_info,

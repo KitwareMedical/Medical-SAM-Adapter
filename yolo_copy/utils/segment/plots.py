@@ -114,7 +114,7 @@ def plot_results_with_masks(file="path/to/results.csv", dir="", best=True):
     """
     Plots training results from CSV files, plotting best or last result highlights based on `best` parameter.
 
-    Example: from utils.plots import *; plot_results('path/to/results.csv')
+    Example: from yolo_copy.utils.plots import *; plot_results('path/to/results.csv')
     """
     save_dir = Path(file).parent if file else Path(dir)
     fig, ax = plt.subplots(2, 8, figsize=(18, 6), tight_layout=True)

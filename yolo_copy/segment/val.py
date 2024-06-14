@@ -40,10 +40,10 @@ ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
 
 import torch.nn.functional as F
 
-from models.common import DetectMultiBackend
-from models.yolo import SegmentationModel
-from utils.callbacks import Callbacks
-from utils.general import (
+from yolo_copy.models.common import DetectMultiBackend
+from yolo_copy.models.yolo import SegmentationModel
+from yolo_copy.utils.callbacks import Callbacks
+from yolo_copy.utils.general import (
     LOGGER,
     NUM_THREADS,
     TQDM_BAR_FORMAT,
@@ -61,13 +61,13 @@ from utils.general import (
     xywh2xyxy,
     xyxy2xywh,
 )
-from utils.metrics import ConfusionMatrix, box_iou
-from utils.plots import output_to_target, plot_val_study
-from utils.segment.dataloaders import create_dataloader
-from utils.segment.general import mask_iou, process_mask, process_mask_native, scale_image
-from utils.segment.metrics import Metrics, ap_per_class_box_and_mask
-from utils.segment.plots import plot_images_and_masks
-from utils.torch_utils import de_parallel, select_device, smart_inference_mode
+from yolo_copy.utils.metrics import ConfusionMatrix, box_iou
+from yolo_copy.utils.plots import output_to_target, plot_val_study
+from yolo_copy.utils.segment.dataloaders import create_dataloader
+from yolo_copy.utils.segment.general import mask_iou, process_mask, process_mask_native, scale_image
+from yolo_copy.utils.segment.metrics import Metrics, ap_per_class_box_and_mask
+from yolo_copy.utils.segment.plots import plot_images_and_masks
+from yolo_copy.utils.torch_utils import de_parallel, select_device, smart_inference_mode
 
 
 def save_one_txt(predn, save_conf, shape, file):

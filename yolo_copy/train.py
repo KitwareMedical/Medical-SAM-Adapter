@@ -45,14 +45,14 @@ if str(ROOT) not in sys.path:
 ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
 
 import val as validate  # for end-of-epoch mAP
-from models.experimental import attempt_load
-from models.yolo import Model
-from utils.autoanchor import check_anchors
-from utils.autobatch import check_train_batch_size
-from utils.callbacks import Callbacks
-from utils.dataloaders import create_dataloader
-from utils.downloads import attempt_download, is_url
-from utils.general import (
+from yolo_copy.models.experimental import attempt_load
+from yolo_copy.models.yolo import Model
+from yolo_copy.utils.autoanchor import check_anchors
+from yolo_copy.utils.autobatch import check_train_batch_size
+from yolo_copy.utils.callbacks import Callbacks
+from yolo_copy.utils.dataloaders import create_dataloader
+from yolo_copy.utils.downloads import attempt_download, is_url
+from yolo_copy.utils.general import (
     LOGGER,
     TQDM_BAR_FORMAT,
     check_amp,
@@ -78,12 +78,12 @@ from utils.general import (
     strip_optimizer,
     yaml_save,
 )
-from utils.loggers import LOGGERS, Loggers
-from utils.loggers.comet.comet_utils import check_comet_resume
-from utils.loss import ComputeLoss
-from utils.metrics import fitness
-from utils.plots import plot_evolve
-from utils.torch_utils import (
+from yolo_copy.utils.loggers import LOGGERS, Loggers
+from yolo_copy.utils.loggers.comet.comet_utils import check_comet_resume
+from yolo_copy.utils.loss import ComputeLoss
+from yolo_copy.utils.metrics import fitness
+from yolo_copy.utils.plots import plot_evolve
+from yolo_copy.utils.torch_utils import (
     EarlyStopping,
     ModelEMA,
     de_parallel,
