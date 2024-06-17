@@ -7,6 +7,12 @@ from utils import cfg
 
 
 def main():
+    yolo_path = os.path.abspath(os.path.dirname(__file__)) + '/yolo_copy'
+    yolo_path = r"M:\Dev\CXR\yolov5"
+    detector = torch.hub.load(yolo_path, 'custom',
+                              path=r'M:\Dev\CXR\LungAI\Data\PreprocessedData-YOLO\models\yolo_lung_detection_v2\weights\best.pt',
+                              source='local')
+
     args = cfg.parse_args()
     lung_ai_path = 'M:/Dev/CXR/LungAI/'
     args.weights = lung_ai_path + "Data/Models/cxr_v2.pth"
@@ -39,19 +45,14 @@ def main():
     '''segmentation data'''
     nice_train_loader, nice_test_loader = get_dataloader(args)
 
-    tol, (eiou, edice) = validation_sam(args, nice_test_loader, start_epoch, net)
+    tol, (eiou, edice) = validation_sam(args, nice_test_loader, start_epoch, net, detector)
     logger.info(f'Total score: {tol}, IOU: {eiou}, DICE: {edice} || @ epoch {start_epoch}.')
 
 
-def validation_sam(args, val_loader, epoch, net: nn.Module, clean_dir=True):
+def validation_sam(args, val_loader, epoch, net: nn.Module, detector):
     GPUdevice = torch.device('cuda', args.gpu_device)
     pos_weight = torch.ones([1]).cuda(device=GPUdevice) * 2
     criterion_G = torch.nn.BCEWithLogitsLoss(pos_weight=pos_weight)
-
-    yolo_path = os.path.abspath(os.path.dirname(__file__)) + '/yolo_copy'
-    detector = torch.hub.load(yolo_path, 'custom',
-                              path=r'M:\Dev\CXR\LungAI\Data\PreprocessedData-YOLO\models\yolo_lung_detection_v2\weights\best.pt',
-                              source='local')
 
     torch.backends.cudnn.benchmark = True
 
