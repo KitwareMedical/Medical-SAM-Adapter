@@ -4,11 +4,12 @@ from einops import rearrange
 from dataset import *
 from function import transform_prompt
 from utils import cfg
+import pandas as pd
 
 
 def main():
     yolo_path = os.path.abspath(os.path.dirname(__file__)) + '/yolo_copy'
-    yolo_path = r"M:\Dev\CXR\yolov5"
+    # yolo_path = r"M:\Dev\CXR\yolov5"
     detector = torch.hub.load(yolo_path, 'custom',
                               path=r'M:\Dev\CXR\LungAI\Data\PreprocessedData-YOLO\models\yolo_lung_detection_v2\weights\best.pt',
                               source='local')
@@ -73,7 +74,11 @@ def validation_sam(args, val_loader, epoch, net: nn.Module, detector):
 
     with tqdm(total=n_val, desc='Validation round', unit='batch', leave=False) as pbar:
         for ind, pack in enumerate(val_loader):
-            det = detector(pack['image'])
+            name = pack['image_meta_dict']['filename_or_obj']
+            csvs = []
+            for n in name:
+                det = pd.read_csv(os.path.join(args.data_path, 'Detections', n + '.csv'))
+                csvs.append(det)
             imgsw = pack['image'].to(dtype=torch.float32, device=GPUdevice)
             masksw = pack['label'].to(dtype=torch.float32, device=GPUdevice)
             # for k,v in pack['image_meta_dict'].items():
@@ -83,7 +88,6 @@ def validation_sam(args, val_loader, epoch, net: nn.Module, detector):
             else:
                 ptw = pack['pt']
                 point_labels = pack['p_label']
-            name = pack['image_meta_dict']['filename_or_obj']
 
             buoy = 0
             if args.evl_chunk:
