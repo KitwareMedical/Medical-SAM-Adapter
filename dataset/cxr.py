@@ -18,6 +18,15 @@ class ChestXRay(Dataset):
             df = pd.read_csv(os.path.join(data_path, 'PreprocessedData-YOLO/train.txt'), header=None)
         elif mode == 'Test':
             df = pd.read_csv(os.path.join(data_path, 'PreprocessedData-YOLO/val.txt'), header=None)
+
+        # now balance the dataset (Children's is the smallest)
+        children_list = df[df[0].str.contains('Children')]
+        shenzhen_list = df[df[0].str.contains('Shenzhen')]
+        montgomery_list = df[df[0].str.contains('Montgomery')]
+        children_size = len(children_list)
+        df = pd.concat([children_list, shenzhen_list.head(children_size), montgomery_list.head(children_size)])
+        df = df.sample(frac=1, random_state=1983)
+
         self.name_list = list(df[0])
 
         self.data_path = data_path
