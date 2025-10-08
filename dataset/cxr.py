@@ -18,6 +18,11 @@ class ChestXRay(Dataset):
             df = pd.read_csv(os.path.join(data_path, 'PreprocessedData-YOLO/train.txt'), header=None)
         elif mode == 'Test':
             df = pd.read_csv(os.path.join(data_path, 'PreprocessedData-YOLO/val.txt'), header=None)
+
+        children_list = df[df[0].str.contains('Children')]
+        df = children_list
+        df = df.sample(frac=1, random_state=1983)  # shuffle the dataframe
+
         self.name_list = list(df[0])
 
         self.data_path = data_path
