@@ -19,13 +19,19 @@ class ChestXRay(Dataset):
         elif mode == 'Test':
             df = pd.read_csv(os.path.join(data_path, 'PreprocessedData-YOLO/val.txt'), header=None)
 
-        # now balance the dataset (Children's is the smallest)
         children_list = df[df[0].str.contains('Children')]
         shenzhen_list = df[df[0].str.contains('Shenzhen')]
         montgomery_list = df[df[0].str.contains('Montgomery')]
         children_size = len(children_list)
-        df = pd.concat([children_list, shenzhen_list.head(children_size), montgomery_list.head(children_size)])
-        df = df.sample(frac=1, random_state=1983)
+
+        if mode == 'Training':
+            # balance the dataset (Children's is the smallest)
+            df = pd.concat([children_list, shenzhen_list.head(children_size), montgomery_list.head(children_size)])
+        elif mode == 'Test':
+            # for evaluation, we only care about the performance on Children's dataset
+            df = children_list
+
+        df = df.sample(frac=1, random_state=1983)  # shuffle the dataframe
 
         self.name_list = list(df[0])
 
