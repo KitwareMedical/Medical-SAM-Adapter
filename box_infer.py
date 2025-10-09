@@ -10,8 +10,8 @@ from utils import *
 def main():
     args = cfg.parse_args()
     lung_ai_path = 'M:/Dev/CXR/LungAI/'
-    args.weights = lung_ai_path + "Data/Models/cxr_v2.pth"
-    args.sam_ckpt = lung_ai_path + "Data/Models/cxr_v2.pth"
+    args.weights = lung_ai_path + "Data/Models/cxr_v5b.pth"
+    args.sam_ckpt = lung_ai_path + "Data/Models/cxr_v5b.pth"
     args.data_path = "./Data/"
     args.dataset = "cxr"
     args.vis = 1
