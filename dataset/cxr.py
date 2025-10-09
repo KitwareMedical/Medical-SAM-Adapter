@@ -17,7 +17,7 @@ class ChestXRay(Dataset):
         if mode == 'Training':
             df = pd.read_csv(os.path.join(data_path, 'PreprocessedData-YOLO/train.txt'), header=None)
         elif mode == 'Test':
-            df = pd.read_csv(os.path.join(data_path, 'PreprocessedData-YOLO/val.txt'), header=None)
+            df = pd.read_csv(os.path.join(data_path, 'PreprocessedData-YOLO/test.txt'), header=None)
 
         children_list = df[df[0].str.contains('Children')]
         df = children_list
