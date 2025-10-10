@@ -7,15 +7,18 @@ from dataset import *
 from utils import *
 
 
+EXPERIMENT = 'cxr_v1'
+
+
 def main():
     args = cfg.parse_args()
-    lung_ai_path = 'M:/Dev/CXR/LungAI/'
-    args.weights = lung_ai_path + "Data/Models/cxr_v2.pth"
-    args.sam_ckpt = lung_ai_path + "Data/Models/cxr_v2.pth"
+    lung_ai_path = f'M:/Dev/CXR/LungAI/Data/Models/{EXPERIMENT}.pth'
+    args.weights = lung_ai_path
+    args.sam_ckpt = lung_ai_path
     args.data_path = "./Data/"
     args.dataset = "cxr"
     args.vis = 1
-    args.exp_name = "cxr_v2"
+    args.exp_name = EXPERIMENT
 
     GPUdevice = torch.device('cuda', args.gpu_device)
 
