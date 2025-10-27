@@ -10,7 +10,7 @@ from dataset import *
 from utils import *
 
 # run with command line parameters:
-# -dataset cxr -mod sam_adpt -net sam -sam_ckpt Data/Models/sam_vit_b_01ec64.pth -encoder vit_b -b 1
+# -dataset cxr -mod sam_adpt -net sam -sam_ckpt Data/Models/sam_vit_b_01ec64.pth -encoder vit_b -b 1 -w 0
 EXPERIMENT = 'vanilla_sam_vit_b_01ec64'
 
 
@@ -146,7 +146,7 @@ def validation_sam(args, val_loader, epoch, net, clean_dir=True):
                     sam_image = torch.transpose(sam_image, 0, 1)  # swap height and width
                     predictor.set_image(sam_image.cpu().numpy())
                     # predictor.set_torch_image(imgs, imgs.shape[:2])
-                    pred, _, _ = predictor.predict(
+                    pred, probs, _ = predictor.predict(
                         point_coords=pt[0].cpu().numpy().squeeze(axis=0),
                         point_labels=pt[1].cpu().numpy().squeeze(axis=0),
                         return_logits=True)
@@ -154,7 +154,9 @@ def validation_sam(args, val_loader, epoch, net, clean_dir=True):
                     # itk.imwrite(itk.image_view_from_array(pred.astype(np.uint8)), "pred.nrrd")
                     pred = torch.Tensor(np.expand_dims(pred, 0)).to(device=GPUdevice)
 
-                    pred = pred[:, :args.multimask_output, :, :]
+                    # pred = pred[:, :args.multimask_output, :, :]  # first mask(s)
+                    pred = pred[:, 1:2, :, :]  # middle mask
+                    # pred = pred[:, -args.multimask_output:, :, :]  # last mask(s)
 
                     # Resize to the ordered output size
                     pred = F.interpolate(pred, size=(args.out_size, args.out_size))
