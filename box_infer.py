@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
-from segment_anything import sam_model_registry
 from einops import rearrange
+from segment_anything import SamPredictor, sam_model_registry
 
-import function
 from conf import settings
 # from dataset import *
 # from models.discriminatorlayer import discriminator
@@ -11,7 +10,7 @@ from dataset import *
 from utils import *
 
 # run with command line parameters:
-# -dataset cxr -mod sam_adpt -net sam -sam_ckpt Data/Models/sam_vit_b_01ec64.pth -encoder vit_b
+# -dataset cxr -mod sam_adpt -net sam -sam_ckpt Data/Models/sam_vit_b_01ec64.pth -encoder vit_b -b 1
 EXPERIMENT = 'vanilla_sam_vit_b_01ec64'
 
 
@@ -35,7 +34,7 @@ def main():
     '''segmentation data'''
     nice_train_loader, nice_test_loader = get_dataloader(args)
 
-    tol, (eiou, edice) = function.validation_sam(args, nice_test_loader, start_epoch, net)
+    tol, (eiou, edice) = validation_sam(args, nice_test_loader, start_epoch, net)
     logger.info(f'Total score: {tol}, IOU: {eiou}, DICE: {edice} || @ epoch {start_epoch}.')
 
 
@@ -57,9 +56,11 @@ epoch_loss_values = []
 metric_values = []
 
 
-def validation_sam(args, val_loader, epoch, net: nn.Module, clean_dir=True):
+def validation_sam(args, val_loader, epoch, net, clean_dir=True):
     # eval mode
     net.eval()
+
+    predictor = SamPredictor(net)
 
     mask_type = torch.float32
     n_val = len(val_loader)  # the number of batch
@@ -140,49 +141,20 @@ def validation_sam(args, val_loader, epoch, net: nn.Module, clean_dir=True):
 
                 '''test'''
                 with torch.no_grad():
-                    imge = net.image_encoder(imgs)
-                    if args.net == 'sam' or args.net == 'mobile_sam':
-                        se, de = net.prompt_encoder(
-                            points=pt,
-                            boxes=None,
-                            masks=None,
-                        )
-                    elif args.net == "efficient_sam":
-                        coords_torch, labels_torch = transform_prompt(coords_torch, labels_torch, h, w)
-                        se = net.prompt_encoder(
-                            coords=coords_torch,
-                            labels=labels_torch,
-                        )
+                    sam_image = imgs.squeeze(axis=0)
+                    sam_image = torch.transpose(sam_image, 0, -1)  # make channel last
+                    sam_image = torch.transpose(sam_image, 0, 1)  # swap height and width
+                    predictor.set_image(sam_image.cpu().numpy())
+                    # predictor.set_torch_image(imgs, imgs.shape[:2])
+                    pred, _, _ = predictor.predict(
+                        point_coords=pt[0].cpu().numpy().squeeze(axis=0),
+                        point_labels=pt[1].cpu().numpy().squeeze(axis=0),
+                        return_logits=True)
+                    # import itk  # debug
+                    # itk.imwrite(itk.image_view_from_array(pred.astype(np.uint8)), "pred.nrrd")
+                    pred = torch.Tensor(np.expand_dims(pred, 0)).to(device=GPUdevice)
 
-                    if args.net == 'sam':
-                        pred, _ = net.mask_decoder(
-                            image_embeddings=imge,
-                            image_pe=net.prompt_encoder.get_dense_pe(),
-                            sparse_prompt_embeddings=se,
-                            dense_prompt_embeddings=de,
-                            multimask_output=(args.multimask_output > 1),
-                        )
-                    elif args.net == 'mobile_sam':
-                        pred, _ = net.mask_decoder(
-                            image_embeddings=imge,
-                            image_pe=net.prompt_encoder.get_dense_pe(),
-                            sparse_prompt_embeddings=se,
-                            dense_prompt_embeddings=de,
-                            multimask_output=False,
-                        )
-                    elif args.net == "efficient_sam":
-                        se = se.view(
-                            se.shape[0],
-                            1,
-                            se.shape[1],
-                            se.shape[2],
-                        )
-                        pred, _ = net.mask_decoder(
-                            image_embeddings=imge,
-                            image_pe=net.prompt_encoder.get_dense_pe(),
-                            sparse_prompt_embeddings=se,
-                            multimask_output=False,
-                        )
+                    pred = pred[:, :args.multimask_output, :, :]
 
                     # Resize to the ordered output size
                     pred = F.interpolate(pred, size=(args.out_size, args.out_size))
