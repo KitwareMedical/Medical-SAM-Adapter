@@ -6,15 +6,13 @@ import function
 from dataset import *
 from utils import *
 
-
-EXPERIMENT = 'cxr_v5'
+# run with command line parameters:
+# -dataset cxr -mod sam_adpt -net sam -sam_ckpt Data/Models/sam_vit_b_01ec64.pth -encoder vit_b
+EXPERIMENT = 'vanilla_sam_vit_b_01ec64'
 
 
 def main():
     args = cfg.parse_args()
-    lung_ai_path = f'M:/Dev/CXR/LungAI/Data/Models/{EXPERIMENT}.pth'
-    args.weights = lung_ai_path
-    args.sam_ckpt = lung_ai_path
     args.data_path = "./Data/"
     args.dataset = "cxr"
     args.vis = 1
@@ -24,17 +22,13 @@ def main():
 
     net = get_network(args, args.net, use_gpu=args.gpu, gpu_device=GPUdevice, distribution=args.distributed)
 
-    '''load pretrained model'''
-    assert args.weights != 0
-    print(f'=> resuming from {args.weights}')
-    assert os.path.exists(args.weights)
-    checkpoint_file = os.path.join(args.weights)
-    assert os.path.exists(checkpoint_file)
-    loc = 'cuda:{}'.format(args.gpu_device)
-    checkpoint = torch.load(checkpoint_file, map_location=loc)
-    start_epoch = checkpoint['epoch']
 
-    net.load_state_dict(checkpoint['state_dict'])
+    assert os.path.exists(args.sam_ckpt)
+    loc = 'cuda:{}'.format(args.gpu_device)
+    checkpoint = torch.load(args.sam_ckpt, map_location=loc)
+    start_epoch = 0
+
+    net.load_state_dict(checkpoint, strict=False)
 
 
     args.path_helper = set_log_dir('logs', args.exp_name)
