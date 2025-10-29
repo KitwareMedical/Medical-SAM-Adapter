@@ -10,8 +10,8 @@ from dataset import *
 from utils import *
 
 # run with command line parameters:
-# -dataset cxr -mod sam_adpt -net sam -sam_ckpt Data/Models/sam_vit_b_01ec64.pth -encoder vit_b -b 1 -w 0
-EXPERIMENT = 'vanilla_sam_vit_b_01ec64'
+# -dataset cxr -mod sam_adpt -net sam -sam_ckpt Data/Models/sam-med2d_b.pth -encoder vit_b -b 1 -w 0
+EXPERIMENT = 'sam-med2d_b'
 
 
 def main():
