@@ -149,7 +149,7 @@ def validation_sam(args, val_loader, epoch, net, clean_dir=True):
                     pred, probs, _ = predictor.predict(
                         point_coords=pt[0].cpu().numpy().squeeze(axis=0),
                         point_labels=pt[1].cpu().numpy().squeeze(axis=0),
-                        return_logits=True)
+                        return_logits=False)
                     # import itk  # debug
                     # itk.imwrite(itk.image_view_from_array(pred.astype(np.uint8)), "pred.nrrd")
                     pred = torch.Tensor(np.expand_dims(pred, 0)).to(device=GPUdevice)
